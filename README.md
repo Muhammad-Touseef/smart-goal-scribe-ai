@@ -1,73 +1,156 @@
-# Welcome to your Lovable project
 
-## Project info
+# SMART Goal AI Assistant
 
-**URL**: https://lovable.dev/projects/1e30accb-2cd9-4675-8e4e-1847e9ecc258
+A web application that helps users create SMART goals (Specific, Measurable, Achievable, Relevant, Time-bound) using AI assistance powered by Google Gemini.
 
-## How can I edit this code?
+## Project Structure
 
-There are several ways of editing your application.
+- `src/` - React frontend application
+- `backend/` - Express.js backend server
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1e30accb-2cd9-4675-8e4e-1847e9ecc258) and start prompting.
+- Interactive chat interface for goal planning
+- AI-powered guidance for creating SMART goals
+- Real-time conversation with the AI assistant
+- Responsive design with modern UI components
+- RESTful API for external integrations
 
-Changes made via Lovable will be committed automatically to this repo.
+## Local Development Setup
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js (v16 or higher)
+- npm or yarn
+- Google Gemini API key
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Frontend Setup
 
-Follow these steps:
+1. Install dependencies:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The frontend will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Backend Setup
 
-**Use GitHub Codespaces**
+1. Navigate to the backend directory:
+```bash
+cd backend
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## What technologies are used for this project?
+3. Create environment file:
+```bash
+cp .env.example .env
+```
 
-This project is built with:
+4. Edit `.env` and add your Gemini API key:
+```
+GEMINI_API_KEY=your_actual_api_key_here
+PORT=3001
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+5. Start the backend server:
+```bash
+npm run dev
+```
 
-## How can I deploy this project?
+The backend API will be available at `http://localhost:3001`
 
-Simply open [Lovable](https://lovable.dev/projects/1e30accb-2cd9-4675-8e4e-1847e9ecc258) and click on Share -> Publish.
+### Getting a Gemini API Key
 
-## Can I connect a custom domain to my Lovable project?
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Create a new API key
+4. Copy the key to your `.env` file
 
-Yes, you can!
+### Running Both Frontend and Backend
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Open two terminal windows
+2. In the first terminal, run the backend:
+```bash
+cd backend
+npm run dev
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+3. In the second terminal, run the frontend:
+```bash
+npm run dev
+```
+
+### API Integration
+
+To connect the frontend to the backend, update the `handleSendMessage` function in `src/pages/Index.tsx` to make actual API calls instead of the simulated response:
+
+```javascript
+const response = await fetch('http://localhost:3001/chat', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ message: inputMessage }),
+});
+
+const data = await response.json();
+const aiResponse: Message = {
+  id: (Date.now() + 1).toString(),
+  text: data.response,
+  sender: 'ai',
+  timestamp: new Date()
+};
+```
+
+## API Endpoints
+
+### POST /chat
+Send a message to the AI assistant.
+
+**Request:**
+```json
+{
+  "message": "I want to lose weight"
+}
+```
+
+**Response:**
+```json
+{
+  "response": "That's a great goal! To make it SMART, let's be more specific. How much weight would you like to lose, and by when?"
+}
+```
+
+### GET /health
+Health check endpoint.
+
+**Response:**
+```json
+{
+  "status": "OK",
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+## Deployment
+
+### Frontend (Vercel/Netlify)
+The frontend can be deployed to Vercel or Netlify by connecting your repository.
+
+### Backend (Railway/Render/Heroku)
+The backend can be deployed to Railway, Render, or Heroku. Make sure to set the `GEMINI_API_KEY` environment variable.
+
+## Technologies Used
+
+- **Frontend:** React, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Node.js, Express.js, Google Generative AI
+- **Development:** Vite, ESLint, Prettier
