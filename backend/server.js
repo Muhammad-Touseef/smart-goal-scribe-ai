@@ -44,7 +44,8 @@ app.post('/chat', async (req, res) => {
       return res.status(500).json({ error: 'Gemini API key not configured' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    // Use gemini-1.5-flash which is available for most API keys
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const chat = model.startChat({
       history: [
