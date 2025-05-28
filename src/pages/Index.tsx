@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,7 @@ interface Message {
 }
 
 const Index = () => {
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -43,13 +45,17 @@ const Index = () => {
 
     try {
       console.log('Sending message to backend:', currentMessage);
+      console.log('Session ID:', sessionId);
       
       const response = await fetch('http://localhost:3001/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: currentMessage }),
+        body: JSON.stringify({ 
+          message: currentMessage,
+          sessionId: sessionId 
+        }),
       });
 
       console.log('Response status:', response.status);

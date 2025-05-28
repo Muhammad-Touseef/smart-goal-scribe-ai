@@ -16,6 +16,9 @@ app.use(express.json());
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Store conversation histories in memory (indexed by session ID)
+const conversationHistories = new Map();
+
 const systemPrompt = `You are a SMART Goal Assistant. Your job is to help users create goals that are Specific, Measurable, Achievable, Relevant, and Time-bound.
 
 IMPORTANT RULES:
@@ -49,7 +52,7 @@ Stay focused, be encouraging, and ask only what's needed next.`;
 // Chat endpoint
 app.post('/chat', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, sessionId = 'default' } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
@@ -59,11 +62,9 @@ app.post('/chat', async (req, res) => {
       return res.status(500).json({ error: 'Gemini API key not configured' });
     }
 
-    // Use gemini-1.5-flash which is available for most API keys
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-    const chat = model.startChat({
-      history: [
+    // Get or create conversation history for this session
+    if (!conversationHistories.has(sessionId)) {
+      conversationHistories.set(sessionId, [
         {
           role: 'user',
           parts: [{ text: systemPrompt }],
@@ -72,15 +73,39 @@ app.post('/chat', async (req, res) => {
           role: 'model',
           parts: [{ text: 'I understand. I will help users create SMART goals with short, focused questions and track conversation progress.' }],
         },
-      ],
+      ]);
+    }
+
+    const history = conversationHistories.get(sessionId);
+
+    // Use gemini-1.5-flash which is available for most API keys
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const chat = model.startChat({
+      history: history,
     });
 
     const result = await chat.sendMessage(message);
     const response = await result.response;
     const aiResponse = response.text();
 
+    // Update conversation history
+    history.push(
+      {
+        role: 'user',
+        parts: [{ text: message }],
+      },
+      {
+        role: 'model',
+        parts: [{ text: aiResponse }],
+      }
+    );
+
+    console.log(`Session ${sessionId} - User: ${message}`);
+    console.log(`Session ${sessionId} - AI: ${aiResponse}`);
+
     res.json({ response: aiResponse });
-  } catch (error) {
+  } catch (error) => {
     console.error('Error processing chat:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
