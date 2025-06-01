@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART Goal Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="title-section">
+                    <span class="icon">🎯</span>
+                    <h1>SMART Goal Assistant</h1>
+                </div>
+                <p class="subtitle">Create Specific, Measurable, Achievable, Relevant, and Time-bound goals</p>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <span class="icon">🎯</span>
+                <h2>Goal Planning Chat</h2>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    <div class="message-content">
+                        <p>Hello! I'm your SMART Goal Assistant. I'll help you create Specific, Measurable, Achievable, Relevant, and Time-bound goals. What goal would you like to work on today?</p>
+                        <span class="timestamp" id="initialTimestamp"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="Describe your goal..." disabled>
+                    <button id="sendButton" disabled>
+                        <span class="send-icon">➤</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="smart-grid">
+            <div class="smart-card specific">
+                <h3>Specific</h3>
+                <p>Clear and well-defined</p>
+            </div>
+            <div class="smart-card measurable">
+                <h3>Measurable</h3>
+                <p>Trackable progress</p>
+            </div>
+            <div class="smart-card achievable">
+                <h3>Achievable</h3>
+                <p>Realistic and attainable</p>
+            </div>
+            <div class="smart-card relevant">
+                <h3>Relevant</h3>
+                <p>Aligned with values</p>
+            </div>
+            <div class="smart-card timebound">
+                <h3>Time-bound</h3>
+                <p>Has a deadline</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

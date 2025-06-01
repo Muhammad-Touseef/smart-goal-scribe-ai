@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 dotenv.config();
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -49,8 +51,13 @@ User: "10kg in 2 days" → "That's quite ambitious. What timeframe would be more
 
 Stay focused, be encouraging, and ask only what's needed next.`;
 
-// Chat endpoint
-app.post('/chat', async (req, res) => {
+// Serve chat page
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+});
+
+// Chat API endpoint
+app.post('/api/chat', async (req, res) => {
   try {
     const { message, sessionId = 'default' } = req.body;
 
@@ -105,7 +112,7 @@ app.post('/chat', async (req, res) => {
     console.log(`Session ${sessionId} - AI: ${aiResponse}`);
 
     res.json({ response: aiResponse });
-  } catch (error) => {
+  } catch (error) {
     console.error('Error processing chat:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -116,8 +123,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.redirect('/chat');
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Chat interface available at http://localhost:${PORT}/chat`);
 });
 
 module.exports = app;
